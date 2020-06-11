@@ -1,0 +1,21 @@
+{
+  "name": "action-conventional-commits",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:doitadrian/action-conventional-commits.git",
+  "author": "Adrian Smijulj <adrian1358@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.2.3",
+    "@actions/exec": "^1.0.3",
+    "@actions/github": "^2.1.1"
+  },
+  "devDependencies": {
+    "@zeit/ncc": "^0.22.0",
+    "prettier": "^2.0.2"
+  },
+  "scripts": {
+    "build": "ncc build main.ts --out dist/main",
+    "watch": "ncc build main.ts --out dist/main --watch"
+  }
+}
