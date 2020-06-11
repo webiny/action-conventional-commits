@@ -5,7 +5,7 @@ A simple GitHub action that makes sure all commit messages are following the [Co
 ### Usage
 
 ```yml
-name: Build
+name: My Workflow
 
 on:
   pull_request:
