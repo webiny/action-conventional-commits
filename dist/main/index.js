@@ -24673,8 +24673,6 @@ const { GitHub, context } = __webpack_require__(469);
     const exec = __webpack_require__(986);
     console.log('woaaah');
     console.log("context", JSON.stringify(context.payload.commits));
-    console.log('CEOOO KONTEKAST');
-    console.log("context", JSON.stringify(context));
     return;
     // 1. Extract a list of users from received commits.
     /* const token = process.env.GH_TOKEN;
