@@ -1,15 +1,17 @@
-import { Contreebutors } from "contreebutors";
 const { GitHub, context } = require('@actions/github');
 
 (async () => {
     const core = require("@actions/core");
     const exec = require("@actions/exec");
 
+    console.log('context', context)
+
+    return;
     // 1. Extract a list of users from received commits.
-    const token = process.env.GH_TOKEN;
+   /* const token = process.env.GH_TOKEN;
 
     const client = new GitHub(token, {});
-    const result = await client.repos.listPullRequestsAssociatedWithCommit({
+    const result = await client.({
         owner: context.repo.owner,
         repo: context.repo.repo,
         commit_sha: context.sha,
@@ -29,7 +31,7 @@ const { GitHub, context } = require('@actions/github');
     for (let i = 0; i < users.length; i++) {
         let user = users[i];
         await contreebutors.add(user);
-    }
+    }*/
 
     // 3. Commit changes done on the `contreebutors.json` and `README.md` file.
 
