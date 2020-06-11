@@ -1,8 +1,11 @@
 # Conventional Commits GitHub Action
 
-A simple GitHub action that makes sure all commit messages are following the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0-beta.2/) specification.
+A simple GitHub action that makes sure all commit messages are following the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0-beta.2/) specification. If not, workflow will fail.
+
+Typically, you would make these check in a pre-commit hook (for example, using something like [Commitlint](https://commitlint.js.org/)), but those can be easily skipped, hence this GitHub action.
 
 ### Usage
+Latest version: `v1.0.1`
 
 ```yml
 name: My Workflow
