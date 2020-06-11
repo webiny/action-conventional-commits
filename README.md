@@ -2,6 +2,8 @@
 
 A simple GitHub action that makes sure all commit messages are following the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0-beta.2/) specification. If not, workflow will fail.
 
+![Screenshot](/docs/screenshot.png)
+
 Note that, typically, you would make this check on a pre-commit hook (for example, using something like [Commitlint](https://commitlint.js.org/)), but those can easily be skipped, hence this GitHub action.
 
 ### Usage
