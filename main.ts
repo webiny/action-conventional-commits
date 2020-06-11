@@ -8,6 +8,8 @@ async function run() {
         `ℹ️ Checking if commit messages are following the Conventional Commits specification...`
     );
 
+    console.log('context', JSON.stringify(context, null, 2));
+
     const hasCommits = context.payload && Array.isArray(context.payload.commits);
     if (!hasCommits) {
         core.info(`No commits to check, skipping...`);
