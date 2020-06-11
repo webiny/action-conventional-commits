@@ -5,7 +5,7 @@ const { GitHub, context } = require("@actions/github");
     const exec = require("@actions/exec");
 
     console.log('woaaah')
-    console.log("context", JSON.stringify(context.commits));
+    console.log("context", JSON.stringify(context.payload.commits));
 
     console.log('CEOOO KONTEKAST')
     console.log("context", JSON.stringify(context));

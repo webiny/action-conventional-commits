@@ -24672,7 +24672,7 @@ const { GitHub, context } = __webpack_require__(469);
     const core = __webpack_require__(470);
     const exec = __webpack_require__(986);
     console.log('woaaah');
-    console.log("context", JSON.stringify(context.commits));
+    console.log("context", JSON.stringify(context.payload.commits));
     console.log('CEOOO KONTEKAST');
     console.log("context", JSON.stringify(context));
     return;
