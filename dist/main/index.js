@@ -27942,8 +27942,10 @@ const extractCommits = () => __awaiter(this, void 0, void 0, function* () {
         return context.payload.commits;
     }
     // For PRs, we need to get a list of commits via the GH API:
-    const prCommitsUrl = typeof get(context, "payload.pull_request.commits_url");
+    const prCommitsUrl = get(context, "payload.pull_request.commits_url");
     console.log('ide check URL-a');
+    console.log('dobeoo PR URL', prCommitsUrl);
+    console.log(context.payload);
     if (prCommitsUrl) {
         try {
             const { body } = yield got.get(prCommitsUrl, {

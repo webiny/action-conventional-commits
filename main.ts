@@ -19,6 +19,7 @@ const extractCommits = async (): Promise<Commit[]> => {
     // For PRs, we need to get a list of commits via the GH API:
     const prCommitsUrl = get(context, "payload.pull_request.commits_url");
     console.log('ide check URL-a')
+    console.log('dobeoo PR URL', prCommitsUrl)
     console.log(context.payload)
     if (prCommitsUrl) {
         try {
