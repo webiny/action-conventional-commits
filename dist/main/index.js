@@ -23573,6 +23573,7 @@ function run() {
             return;
         }
         let hasErrors;
+        core.startGroup("Commit messages");
         for (let i = 0; i < context.payload.commits.length; i++) {
             let commit = context.payload.commits[i];
             if (isValidCommitMessage(commit.message)) {
@@ -23583,6 +23584,7 @@ function run() {
                 hasErrors = true;
             }
         }
+        core.endGroup();
         if (hasErrors) {
             core.setFailed(`🚫 According to the conventional-commits specification, some of the commit messages are not valid.`);
         }
