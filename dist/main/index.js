@@ -40,8 +40,10 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(872);
+/******/ 		return __webpack_require__(31);
 /******/ 	};
+/******/ 	// initialize runtime
+/******/ 	runtime(__webpack_require__);
 /******/
 /******/ 	// run startup
 /******/ 	return startup();
@@ -422,6 +424,126 @@ module.exports.sync = spawnSync;
 
 module.exports._parse = parse;
 module.exports._enoent = enoent;
+
+
+/***/ }),
+
+/***/ 31:
+/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// CONCATENATED MODULE: ./src/isValidCommitMesage.ts
+const DEFAULT_COMMIT_TYPES = [
+    "feat",
+    "fix",
+    "docs",
+    "style",
+    "refactor",
+    "test",
+    "build",
+    "ci",
+    "chore",
+    "revert",
+    "merge",
+    "wip",
+];
+const isValidCommitMessage = (message, availableTypes = DEFAULT_COMMIT_TYPES) => {
+    let [possiblyValidCommitType] = message.split(":");
+    possiblyValidCommitType = possiblyValidCommitType.toLowerCase();
+    // Let's remove scope if present.
+    if (possiblyValidCommitType.match(/\([a-z]*?\)/)) {
+        possiblyValidCommitType = possiblyValidCommitType.replace(/\([a-z]*?\)/, "");
+    }
+    possiblyValidCommitType = possiblyValidCommitType
+        .replace(/\s/g, "") // Remove all whitespace
+        .replace(/()/g, "") // Remove all whitespace
+        .replace(/[^a-z]/g, ""); // Only leave [a-z] characters.
+    return availableTypes.includes(possiblyValidCommitType);
+};
+/* harmony default export */ var isValidCommitMesage = (isValidCommitMessage);
+
+// CONCATENATED MODULE: ./src/extractCommits.ts
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+const get = __webpack_require__(854);
+const got = __webpack_require__(77);
+const extractCommits = (context) => __awaiter(undefined, void 0, void 0, function* () {
+    // For "push" events, commits can be found in the "context.payload.commits".
+    const pushCommits = Array.isArray(get(context, "payload.commits"));
+    if (pushCommits) {
+        return context.payload.commits;
+    }
+    // For PRs, we need to get a list of commits via the GH API:
+    const prCommitsUrl = get(context, "payload.pull_request.commits_url");
+    if (prCommitsUrl) {
+        try {
+            const { body } = yield got.get(prCommitsUrl, {
+                responseType: "json",
+            });
+            if (Array.isArray(body)) {
+                return body.map((item) => item.commit);
+            }
+            return [];
+        }
+        catch (_a) {
+            return [];
+        }
+    }
+    return [];
+});
+/* harmony default export */ var src_extractCommits = (extractCommits);
+
+// CONCATENATED MODULE: ./src/main.ts
+var main_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+const { context } = __webpack_require__(469);
+const core = __webpack_require__(470);
+
+
+function run() {
+    return main_awaiter(this, void 0, void 0, function* () {
+        core.info(`ℹ️ Checking if commit messages are following the Conventional Commits specification...`);
+        const extractedCommits = yield src_extractCommits(context);
+        if (extractedCommits.length === 0) {
+            core.info(`No commits to check, skipping...`);
+            return;
+        }
+        let hasErrors;
+        core.startGroup("Commit messages:");
+        for (let i = 0; i < extractedCommits.length; i++) {
+            let commit = extractedCommits[i];
+            if (isValidCommitMesage(commit.message)) {
+                core.info(`✅ ${commit.message}`);
+            }
+            else {
+                core.info(`🚩 ${commit.message}`);
+                hasErrors = true;
+            }
+        }
+        core.endGroup();
+        if (hasErrors) {
+            core.setFailed(`🚫 According to the conventional-commits specification, some of the commit messages are not valid.`);
+        }
+        else {
+            core.info("🎉 All commit messages are following the Conventional Commits specification.");
+        }
+    });
+}
+run();
 
 
 /***/ }),
@@ -6749,7 +6871,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var isPlainObject = _interopDefault(__webpack_require__(696));
+var isPlainObject = _interopDefault(__webpack_require__(626));
 var universalUserAgent = __webpack_require__(796);
 
 function lowercaseKeys(object) {
@@ -10043,7 +10165,7 @@ module.exports = object => {
 
 
 const path = __webpack_require__(622);
-const which = __webpack_require__(814);
+const which = __webpack_require__(968);
 const pathKey = __webpack_require__(39)();
 
 function resolveCommandAttempt(parsed, withoutPathExt) {
@@ -11322,6 +11444,62 @@ exports.HttpClient = HttpClient;
 
 /***/ }),
 
+/***/ 548:
+/***/ (function(module) {
+
+"use strict";
+
+
+/*!
+ * isobject <https://github.com/jonschlinkert/isobject>
+ *
+ * Copyright (c) 2014-2017, Jon Schlinkert.
+ * Released under the MIT License.
+ */
+
+function isObject(val) {
+  return val != null && typeof val === 'object' && Array.isArray(val) === false;
+}
+
+/*!
+ * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
+ *
+ * Copyright (c) 2014-2017, Jon Schlinkert.
+ * Released under the MIT License.
+ */
+
+function isObjectObject(o) {
+  return isObject(o) === true
+    && Object.prototype.toString.call(o) === '[object Object]';
+}
+
+function isPlainObject(o) {
+  var ctor,prot;
+
+  if (isObjectObject(o) === false) return false;
+
+  // If has modified constructor
+  ctor = o.constructor;
+  if (typeof ctor !== 'function') return false;
+
+  // If has modified prototype
+  prot = ctor.prototype;
+  if (isObjectObject(prot) === false) return false;
+
+  // If constructor does not have an Object-specific method
+  if (prot.hasOwnProperty('isPrototypeOf') === false) {
+    return false;
+  }
+
+  // Most likely a plain Object
+  return true;
+}
+
+module.exports = isPlainObject;
+
+
+/***/ }),
+
 /***/ 550:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -12248,6 +12426,62 @@ module.exports = options => {
 
 /***/ }),
 
+/***/ 626:
+/***/ (function(module) {
+
+"use strict";
+
+
+/*!
+ * isobject <https://github.com/jonschlinkert/isobject>
+ *
+ * Copyright (c) 2014-2017, Jon Schlinkert.
+ * Released under the MIT License.
+ */
+
+function isObject(val) {
+  return val != null && typeof val === 'object' && Array.isArray(val) === false;
+}
+
+/*!
+ * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
+ *
+ * Copyright (c) 2014-2017, Jon Schlinkert.
+ * Released under the MIT License.
+ */
+
+function isObjectObject(o) {
+  return isObject(o) === true
+    && Object.prototype.toString.call(o) === '[object Object]';
+}
+
+function isPlainObject(o) {
+  var ctor,prot;
+
+  if (isObjectObject(o) === false) return false;
+
+  // If has modified constructor
+  ctor = o.constructor;
+  if (typeof ctor !== 'function') return false;
+
+  // If has modified prototype
+  prot = ctor.prototype;
+  if (isObjectObject(prot) === false) return false;
+
+  // If constructor does not have an Object-specific method
+  if (prot.hasOwnProperty('isPrototypeOf') === false) {
+    return false;
+  }
+
+  // Most likely a plain Object
+  return true;
+}
+
+module.exports = isPlainObject;
+
+
+/***/ }),
+
 /***/ 628:
 /***/ (function(__unusedmodule, exports) {
 
@@ -12454,62 +12688,6 @@ class Deprecation extends Error {
 }
 
 exports.Deprecation = Deprecation;
-
-
-/***/ }),
-
-/***/ 696:
-/***/ (function(module) {
-
-"use strict";
-
-
-/*!
- * isobject <https://github.com/jonschlinkert/isobject>
- *
- * Copyright (c) 2014-2017, Jon Schlinkert.
- * Released under the MIT License.
- */
-
-function isObject(val) {
-  return val != null && typeof val === 'object' && Array.isArray(val) === false;
-}
-
-/*!
- * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
- *
- * Copyright (c) 2014-2017, Jon Schlinkert.
- * Released under the MIT License.
- */
-
-function isObjectObject(o) {
-  return isObject(o) === true
-    && Object.prototype.toString.call(o) === '[object Object]';
-}
-
-function isPlainObject(o) {
-  var ctor,prot;
-
-  if (isObjectObject(o) === false) return false;
-
-  // If has modified constructor
-  ctor = o.constructor;
-  if (typeof ctor !== 'function') return false;
-
-  // If has modified prototype
-  prot = ctor.prototype;
-  if (isObjectObject(prot) === false) return false;
-
-  // If constructor does not have an Object-specific method
-  if (prot.hasOwnProperty('isPrototypeOf') === false) {
-    return false;
-  }
-
-  // Most likely a plain Object
-  return true;
-}
-
-module.exports = isPlainObject;
 
 
 /***/ }),
@@ -12819,7 +12997,7 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var endpoint = __webpack_require__(385);
 var universalUserAgent = __webpack_require__(796);
-var isPlainObject = _interopDefault(__webpack_require__(696));
+var isPlainObject = _interopDefault(__webpack_require__(548));
 var nodeFetch = _interopDefault(__webpack_require__(454));
 var requestError = __webpack_require__(257);
 
@@ -13362,148 +13540,6 @@ const createTokenAuth = function createTokenAuth(token) {
 
 exports.createTokenAuth = createTokenAuth;
 //# sourceMappingURL=index.js.map
-
-
-/***/ }),
-
-/***/ 814:
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-module.exports = which
-which.sync = whichSync
-
-var isWindows = process.platform === 'win32' ||
-    process.env.OSTYPE === 'cygwin' ||
-    process.env.OSTYPE === 'msys'
-
-var path = __webpack_require__(622)
-var COLON = isWindows ? ';' : ':'
-var isexe = __webpack_require__(742)
-
-function getNotFoundError (cmd) {
-  var er = new Error('not found: ' + cmd)
-  er.code = 'ENOENT'
-
-  return er
-}
-
-function getPathInfo (cmd, opt) {
-  var colon = opt.colon || COLON
-  var pathEnv = opt.path || process.env.PATH || ''
-  var pathExt = ['']
-
-  pathEnv = pathEnv.split(colon)
-
-  var pathExtExe = ''
-  if (isWindows) {
-    pathEnv.unshift(process.cwd())
-    pathExtExe = (opt.pathExt || process.env.PATHEXT || '.EXE;.CMD;.BAT;.COM')
-    pathExt = pathExtExe.split(colon)
-
-
-    // Always test the cmd itself first.  isexe will check to make sure
-    // it's found in the pathExt set.
-    if (cmd.indexOf('.') !== -1 && pathExt[0] !== '')
-      pathExt.unshift('')
-  }
-
-  // If it has a slash, then we don't bother searching the pathenv.
-  // just check the file itself, and that's it.
-  if (cmd.match(/\//) || isWindows && cmd.match(/\\/))
-    pathEnv = ['']
-
-  return {
-    env: pathEnv,
-    ext: pathExt,
-    extExe: pathExtExe
-  }
-}
-
-function which (cmd, opt, cb) {
-  if (typeof opt === 'function') {
-    cb = opt
-    opt = {}
-  }
-
-  var info = getPathInfo(cmd, opt)
-  var pathEnv = info.env
-  var pathExt = info.ext
-  var pathExtExe = info.extExe
-  var found = []
-
-  ;(function F (i, l) {
-    if (i === l) {
-      if (opt.all && found.length)
-        return cb(null, found)
-      else
-        return cb(getNotFoundError(cmd))
-    }
-
-    var pathPart = pathEnv[i]
-    if (pathPart.charAt(0) === '"' && pathPart.slice(-1) === '"')
-      pathPart = pathPart.slice(1, -1)
-
-    var p = path.join(pathPart, cmd)
-    if (!pathPart && (/^\.[\\\/]/).test(cmd)) {
-      p = cmd.slice(0, 2) + p
-    }
-    ;(function E (ii, ll) {
-      if (ii === ll) return F(i + 1, l)
-      var ext = pathExt[ii]
-      isexe(p + ext, { pathExt: pathExtExe }, function (er, is) {
-        if (!er && is) {
-          if (opt.all)
-            found.push(p + ext)
-          else
-            return cb(null, p + ext)
-        }
-        return E(ii + 1, ll)
-      })
-    })(0, pathExt.length)
-  })(0, pathEnv.length)
-}
-
-function whichSync (cmd, opt) {
-  opt = opt || {}
-
-  var info = getPathInfo(cmd, opt)
-  var pathEnv = info.env
-  var pathExt = info.ext
-  var pathExtExe = info.extExe
-  var found = []
-
-  for (var i = 0, l = pathEnv.length; i < l; i ++) {
-    var pathPart = pathEnv[i]
-    if (pathPart.charAt(0) === '"' && pathPart.slice(-1) === '"')
-      pathPart = pathPart.slice(1, -1)
-
-    var p = path.join(pathPart, cmd)
-    if (!pathPart && /^\.[\\\/]/.test(cmd)) {
-      p = cmd.slice(0, 2) + p
-    }
-    for (var j = 0, ll = pathExt.length; j < ll; j ++) {
-      var cur = p + pathExt[j]
-      var is
-      try {
-        is = isexe.sync(cur, { pathExt: pathExtExe })
-        if (is) {
-          if (opt.all)
-            found.push(cur)
-          else
-            return cur
-        }
-      } catch (ex) {}
-    }
-  }
-
-  if (opt.all && found.length)
-    return found
-
-  if (opt.nothrow)
-    return null
-
-  throw getNotFoundError(cmd)
-}
 
 
 /***/ }),
@@ -27919,80 +27955,6 @@ module.exports = function (str) {
 
 /***/ }),
 
-/***/ 872:
-/***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-const { context } = __webpack_require__(469);
-const core = __webpack_require__(470);
-const get = __webpack_require__(854);
-const got = __webpack_require__(77);
-const isValidCommitMessage = (message) => message.match(/^[a-z].*:/);
-const extractCommits = () => __awaiter(this, void 0, void 0, function* () {
-    // For "push" events, commits can be found in the "context.payload.commits".
-    const pushCommits = Array.isArray(get(context, "payload.commits"));
-    if (pushCommits) {
-        return context.payload.commits;
-    }
-    // For PRs, we need to get a list of commits via the GH API:
-    const prCommitsUrl = get(context, "payload.pull_request.commits_url");
-    if (prCommitsUrl) {
-        try {
-            const { body } = yield got.get(prCommitsUrl, {
-                responseType: "json",
-            });
-            if (Array.isArray(body)) {
-                return body.map((item) => item.commit);
-            }
-            return [];
-        }
-        catch (_a) {
-            return [];
-        }
-    }
-    return [];
-});
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        core.info(`ℹ️ Checking if commit messages are following the Conventional Commits specification...`);
-        const extractedCommits = yield extractCommits();
-        if (extractedCommits.length === 0) {
-            core.info(`No commits to check, skipping...`);
-            return;
-        }
-        let hasErrors;
-        core.startGroup("Commit messages:");
-        for (let i = 0; i < extractedCommits.length; i++) {
-            let commit = extractedCommits[i];
-            if (isValidCommitMessage(commit.message)) {
-                core.info(`✅ ${commit.message}`);
-            }
-            else {
-                core.info(`🚩 ${commit.message}`);
-                hasErrors = true;
-            }
-        }
-        core.endGroup();
-        if (hasErrors) {
-            core.setFailed(`🚫 According to the conventional-commits specification, some of the commit messages are not valid.`);
-        }
-        else {
-            core.info("🎉 All commit messages are following the Conventional Commits specification.");
-        }
-    });
-}
-run();
-
-
-/***/ }),
-
 /***/ 881:
 /***/ (function(module) {
 
@@ -32183,6 +32145,148 @@ module.exports = options => {
 
 /***/ }),
 
+/***/ 968:
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+module.exports = which
+which.sync = whichSync
+
+var isWindows = process.platform === 'win32' ||
+    process.env.OSTYPE === 'cygwin' ||
+    process.env.OSTYPE === 'msys'
+
+var path = __webpack_require__(622)
+var COLON = isWindows ? ';' : ':'
+var isexe = __webpack_require__(742)
+
+function getNotFoundError (cmd) {
+  var er = new Error('not found: ' + cmd)
+  er.code = 'ENOENT'
+
+  return er
+}
+
+function getPathInfo (cmd, opt) {
+  var colon = opt.colon || COLON
+  var pathEnv = opt.path || process.env.PATH || ''
+  var pathExt = ['']
+
+  pathEnv = pathEnv.split(colon)
+
+  var pathExtExe = ''
+  if (isWindows) {
+    pathEnv.unshift(process.cwd())
+    pathExtExe = (opt.pathExt || process.env.PATHEXT || '.EXE;.CMD;.BAT;.COM')
+    pathExt = pathExtExe.split(colon)
+
+
+    // Always test the cmd itself first.  isexe will check to make sure
+    // it's found in the pathExt set.
+    if (cmd.indexOf('.') !== -1 && pathExt[0] !== '')
+      pathExt.unshift('')
+  }
+
+  // If it has a slash, then we don't bother searching the pathenv.
+  // just check the file itself, and that's it.
+  if (cmd.match(/\//) || isWindows && cmd.match(/\\/))
+    pathEnv = ['']
+
+  return {
+    env: pathEnv,
+    ext: pathExt,
+    extExe: pathExtExe
+  }
+}
+
+function which (cmd, opt, cb) {
+  if (typeof opt === 'function') {
+    cb = opt
+    opt = {}
+  }
+
+  var info = getPathInfo(cmd, opt)
+  var pathEnv = info.env
+  var pathExt = info.ext
+  var pathExtExe = info.extExe
+  var found = []
+
+  ;(function F (i, l) {
+    if (i === l) {
+      if (opt.all && found.length)
+        return cb(null, found)
+      else
+        return cb(getNotFoundError(cmd))
+    }
+
+    var pathPart = pathEnv[i]
+    if (pathPart.charAt(0) === '"' && pathPart.slice(-1) === '"')
+      pathPart = pathPart.slice(1, -1)
+
+    var p = path.join(pathPart, cmd)
+    if (!pathPart && (/^\.[\\\/]/).test(cmd)) {
+      p = cmd.slice(0, 2) + p
+    }
+    ;(function E (ii, ll) {
+      if (ii === ll) return F(i + 1, l)
+      var ext = pathExt[ii]
+      isexe(p + ext, { pathExt: pathExtExe }, function (er, is) {
+        if (!er && is) {
+          if (opt.all)
+            found.push(p + ext)
+          else
+            return cb(null, p + ext)
+        }
+        return E(ii + 1, ll)
+      })
+    })(0, pathExt.length)
+  })(0, pathEnv.length)
+}
+
+function whichSync (cmd, opt) {
+  opt = opt || {}
+
+  var info = getPathInfo(cmd, opt)
+  var pathEnv = info.env
+  var pathExt = info.ext
+  var pathExtExe = info.extExe
+  var found = []
+
+  for (var i = 0, l = pathEnv.length; i < l; i ++) {
+    var pathPart = pathEnv[i]
+    if (pathPart.charAt(0) === '"' && pathPart.slice(-1) === '"')
+      pathPart = pathPart.slice(1, -1)
+
+    var p = path.join(pathPart, cmd)
+    if (!pathPart && /^\.[\\\/]/.test(cmd)) {
+      p = cmd.slice(0, 2) + p
+    }
+    for (var j = 0, ll = pathExt.length; j < ll; j ++) {
+      var cur = p + pathExt[j]
+      var is
+      try {
+        is = isexe.sync(cur, { pathExt: pathExtExe })
+        if (is) {
+          if (opt.all)
+            found.push(cur)
+          else
+            return cur
+        }
+      } catch (ex) {}
+    }
+  }
+
+  if (opt.all && found.length)
+    return found
+
+  if (opt.nothrow)
+    return null
+
+  throw getNotFoundError(cmd)
+}
+
+
+/***/ }),
+
 /***/ 969:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -32384,4 +32488,31 @@ module.exports.protocolCache = cache;
 
 /***/ })
 
-/******/ });
+/******/ },
+/******/ function(__webpack_require__) { // webpackRuntimeModules
+/******/ 	"use strict";
+/******/ 
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	!function() {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getter */
+/******/ 	!function() {
+/******/ 		// define getter function for harmony exports
+/******/ 		var hasOwnProperty = Object.prototype.hasOwnProperty;
+/******/ 		__webpack_require__.d = function(exports, name, getter) {
+/******/ 			if(!hasOwnProperty.call(exports, name)) {
+/******/ 				Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ }
+);
