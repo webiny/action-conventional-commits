@@ -1,40 +1,29 @@
-const { GitHub, context } = require("@actions/github");
+const { context } = require("@actions/github");
+const core = require("@actions/core");
 
-(async () => {
-    const core = require("@actions/core");
-    const exec = require("@actions/exec");
+const isValidCommitMessage = message => message.match(/^[a-z].*:/);
 
-    console.log('woaaah')
-    console.log("context", JSON.stringify(context.payload.commits));
+async function run() {
+    core.info(
+        `ℹ️ Checking if commit messages are following the Conventional Commits specification...`
+    );
 
-    return;
-    // 1. Extract a list of users from received commits.
-    /* const token = process.env.GH_TOKEN;
+    const hasCommits = context.payload && Array.isArray(context.payload.commits);
+    if (!hasCommits) {
+        core.info(`No commits to check, skipping...`);
+        return;
+    }
 
-    const client = new GitHub(token, {});
-    const result = await client.({
-        owner: context.repo.owner,
-        repo: context.repo.repo,
-        commit_sha: context.sha,
-    });
+    for (let i = 0; i < context.payload.commits.length; i++) {
+        let commit = context.payload.commits[i];
+        if (!isValidCommitMessage(commit.message)) {
+            core.setFailed(
+                `According to the conventional-commits specification, commit message ${commit.message} is not valid.`
+            );
+        }
+    }
 
-    const pr = result.data.length > 0 && result.data[0];
+    core.info("🎉 All commit messages are following the Conventional Commits specification.");
+}
 
-    core.setOutput('pr', pr && pr.number || '');
-    core.setOutput('number', pr && pr.number || '');
-    core.setOutput('title', pr && pr.title || '');
-    core.setOutput('body', pr && pr.body || '');
-
-
-    // 2. Add them to the list.
-    const contreebutors = new Contreebutors();
-
-    for (let i = 0; i < users.length; i++) {
-        let user = users[i];
-        await contreebutors.add(user);
-    }*/
-
-    // 3. Commit changes done on the `contreebutors.json` and `README.md` file.
-
-    // 4. Add comment to the merged PR - notify the user that he was added to the contributors list.
-})();
+run();
