@@ -18,8 +18,8 @@ const isValidCommitMessage = (message, availableTypes = DEFAULT_COMMIT_TYPES): b
     possiblyValidCommitType = possiblyValidCommitType.toLowerCase();
 
     // Let's remove scope if present.
-    if (possiblyValidCommitType.match(/\([a-z]*?\)/)) {
-        possiblyValidCommitType = possiblyValidCommitType.replace(/\([a-z]*?\)/, "");
+    if (possiblyValidCommitType.match(/\(\S*?\)/)) {
+        possiblyValidCommitType = possiblyValidCommitType.replace(/\(\S*?\)/, "");
     }
 
     possiblyValidCommitType = possiblyValidCommitType
