@@ -8,7 +8,7 @@ Note that, typically, you would make this check on a pre-commit hook (for exampl
 Latest version: `v1.0.1`
 
 ```yml
-name: My Workflow
+name: Conventional Commits
 
 on:
   pull_request:
