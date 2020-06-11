@@ -23567,6 +23567,7 @@ const isValidCommitMessage = message => message.match(/^[a-z].*:/);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         core.info(`ℹ️ Checking if commit messages are following the Conventional Commits specification...`);
+        console.log('context', JSON.stringify(context, null, 2));
         const hasCommits = context.payload && Array.isArray(context.payload.commits);
         if (!hasCommits) {
             core.info(`No commits to check, skipping...`);
