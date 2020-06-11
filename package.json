@@ -8,7 +8,9 @@
   "dependencies": {
     "@actions/core": "^1.2.3",
     "@actions/exec": "^1.0.3",
-    "@actions/github": "^2.1.1"
+    "@actions/github": "^2.1.1",
+    "got": "^11.3.0",
+    "lodash.get": "^4.4.2"
   },
   "devDependencies": {
     "@zeit/ncc": "^0.22.0",
