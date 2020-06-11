@@ -15,7 +15,7 @@ async function run() {
     }
 
     let hasErrors;
-    core.startGroup("Commit messages");
+    core.startGroup("Commit messages:");
     for (let i = 0; i < context.payload.commits.length; i++) {
         let commit = context.payload.commits[i];
         if (isValidCommitMessage(commit.message)) {
