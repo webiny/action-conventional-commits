@@ -4,7 +4,11 @@ const { GitHub, context } = require("@actions/github");
     const core = require("@actions/core");
     const exec = require("@actions/exec");
 
+    console.log('woaaah')
     console.log("context", JSON.stringify(context.commits));
+
+    console.log('CEOOO KONTEKAST')
+    console.log("context", JSON.stringify(context));
 
     return;
     // 1. Extract a list of users from received commits.
