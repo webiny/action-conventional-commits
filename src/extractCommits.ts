@@ -1,5 +1,5 @@
-import get from "lodash.get"
-import got from "got"
+import get from "lodash.get";
+import got from "got";
 
 type Commit = {
     message: string;
