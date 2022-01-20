@@ -1,7 +1,8 @@
 name: "Conventional Commits Check"
 description: "Ensures that all commit messages in a Pull Request are following the conventional-commits standard."
-icon: "check-square"
-color: "blue"
+brnading:
+  icon: "check-square"
+  color: "blue"
 runs:
   using: node12
   main: dist/main/index.js
