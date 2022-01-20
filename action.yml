@@ -1,6 +1,6 @@
 name: "Conventional Commits Check"
 description: "Ensures that all commit messages in a Pull Request are following the conventional-commits standard."
-brnading:
+branding:
   icon: "check-square"
   color: "blue"
 runs:
