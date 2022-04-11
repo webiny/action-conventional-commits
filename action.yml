@@ -1,5 +1,12 @@
 name: "Conventional Commits"
 description: "Ensures that all commit messages are following the conventional-commits standard."
 runs:
-  using: node12
-  main: dist/main/index.js
+  using: node16
+  main: dist/main.js
+inputs:
+  github-token: 
+    required: true
+    description: Github token
+  check-pr-title:
+    required: false
+    description: Check PR title

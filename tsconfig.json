@@ -8,7 +8,7 @@
     "./node_modules/*"
   ],
   "compilerOptions": {
-    "target": "es2015",
+    "target": "es2016",
     "moduleResolution": "node",
     "types": []
   }

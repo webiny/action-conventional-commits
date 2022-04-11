@@ -1,35 +1,43 @@
-import get from "lodash.get";
-import got from "got";
+import get from 'lodash.get'
+import { GitHub } from '@actions/github'
+import { getInput } from '@actions/core'
+import type { Context } from '@actions/github/lib/context'
 
-type Commit = {
-    message: string;
-};
+interface Commit {
+    message: string
+}
 
-const extractCommits = async (context): Promise<Commit[]> => {
+const extractCommits = async(context: Context): Promise<Commit[]> => {
     // For "push" events, commits can be found in the "context.payload.commits".
-    const pushCommits = Array.isArray(get(context, "payload.commits"));
-    if (pushCommits) {
-        return context.payload.commits;
-    }
+    const pushCommits = Array.isArray(get(context, 'payload.commits'))
+    if (pushCommits)
+        return context.payload.commits
 
     // For PRs, we need to get a list of commits via the GH API:
-    const prCommitsUrl = get(context, "payload.pull_request.commits_url");
-    if (prCommitsUrl) {
+    const prNumber = get(context, 'payload.pull_request.number')
+    if (prNumber) {
         try {
-            const { body } = await got.get(prCommitsUrl, {
-                responseType: "json",
-            });
+            const token = getInput('github-token')
+            const github = new GitHub(token)
 
-            if (Array.isArray(body)) {
-                return body.map((item) => item.commit);
+            const params = {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
             }
-            return [];
-        } catch {
-            return [];
+            const { data } = await github.pulls.listCommits(params)
+
+            if (Array.isArray(data))
+                return data.map(item => item.commit)
+
+            return []
+        }
+        catch {
+            return []
         }
     }
 
-    return [];
-};
+    return []
+}
 
-export default extractCommits;
+export default extractCommits

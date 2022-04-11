@@ -23,5 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: webiny/action-conventional-commits@v1.0.3
+      - uses: webiny/action-conventional-commits@v1.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
