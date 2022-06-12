@@ -489,6 +489,7 @@ const DEFAULT_COMMIT_TYPES = [
     "refactor",
     "test",
     "build",
+    "perf",
     "ci",
     "chore",
     "revert",
@@ -510,6 +511,7 @@ const isValidCommitMessage = (message, availableTypes = DEFAULT_COMMIT_TYPES) =>
     }
     possiblyValidCommitType = possiblyValidCommitType
         .replace(/\s/g, "") // Remove all whitespace
+        .replace(/\!/g, "") // Remove bang for notify breaking change
         .replace(/()/g, "") // Remove all whitespace
         .replace(/[^a-z]/g, ""); // Only leave [a-z] characters.
     return availableTypes.includes(possiblyValidCommitType);
@@ -2815,7 +2817,7 @@ const understoodStatuses = new Set([
 const errorStatusCodes = new Set([
     500,
     502,
-    503, 
+    503,
     504,
 ]);
 
@@ -4201,7 +4203,7 @@ exports.parse = function (s) {
       if(/^:base64:/.test(value))
         return Buffer.from(value.substring(8), 'base64')
       else
-        return /^:/.test(value) ? value.substring(1) : value 
+        return /^:/.test(value) ? value.substring(1) : value
     }
     return value
   })
@@ -33081,7 +33083,7 @@ exports.default = normalizeArguments;
 /******/ },
 /******/ function(__webpack_require__) { // webpackRuntimeModules
 /******/ 	"use strict";
-/******/ 
+/******/
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	!function() {
 /******/ 		// define __esModule on exports
@@ -33092,7 +33094,7 @@ exports.default = normalizeArguments;
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	}();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/define property getter */
 /******/ 	!function() {
 /******/ 		// define getter function for harmony exports
@@ -33103,7 +33105,7 @@ exports.default = normalizeArguments;
 /******/ 			}
 /******/ 		};
 /******/ 	}();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/create fake namespace object */
 /******/ 	!function() {
 /******/ 		// create a fake namespace object
@@ -33122,7 +33124,7 @@ exports.default = normalizeArguments;
 /******/ 			return ns;
 /******/ 		};
 /******/ 	}();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/compat get default export */
 /******/ 	!function() {
 /******/ 		// getDefaultExport function for compatibility with non-harmony modules
@@ -33134,6 +33136,6 @@ exports.default = normalizeArguments;
 /******/ 			return getter;
 /******/ 		};
 /******/ 	}();
-/******/ 	
+/******/
 /******/ }
 );
