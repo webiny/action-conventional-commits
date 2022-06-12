@@ -7,7 +7,7 @@ A simple GitHub action that makes sure all commit messages are following the [Co
 Note that, typically, you would make this check on a pre-commit hook (for example, using something like [Commitlint](https://commitlint.js.org/)), but those can easily be skipped, hence this GitHub action.
 
 ### Usage
-Latest version: `v1.0.3`
+Latest version: `v1.0.5`
 
 ```yml
 name: Conventional Commits
@@ -23,5 +23,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: webiny/action-conventional-commits@v1.0.3
+      - uses: webiny/action-conventional-commits@v1.0.5
 ```
