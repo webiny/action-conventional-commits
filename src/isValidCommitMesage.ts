@@ -6,6 +6,7 @@ const DEFAULT_COMMIT_TYPES = [
     "refactor",
     "test",
     "build",
+    "perf",
     "ci",
     "chore",
     "revert",
