@@ -9,7 +9,7 @@ async function run() {
         `ℹ️ Checking if commit messages are following the Conventional Commits specification...`
     );
 
-    const extractedCommits = await extractCommits(context);
+    const extractedCommits = await extractCommits(context, core);
     if (extractedCommits.length === 0) {
         core.info(`No commits to check, skipping...`);
         return;
