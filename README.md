@@ -21,7 +21,7 @@ jobs:
     name: Conventional Commits
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: webiny/action-conventional-commits@v1.1.0
         # optional, required for private repos
