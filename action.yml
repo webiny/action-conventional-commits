@@ -4,6 +4,11 @@ inputs:
   GITHUB_TOKEN:
     description: 'GitHub token'
     required: false
+  allowed-commit-types:
+    description: 'Specify a comma separated list of allowed commit types'
+    default: 'feat,fix,docs,style,refactor,test,build,perf,ci,chore,revert,merge,wip'
+    required: false
+
 runs:
   using: node16
   main: dist/main/index.js
