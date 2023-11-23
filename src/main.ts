@@ -19,7 +19,10 @@ async function run() {
     core.startGroup("Commit messages:");
     for (let i = 0; i < extractedCommits.length; i++) {
         let commit = extractedCommits[i];
-        if (isValidCommitMessage(commit.message)) {
+
+        const allowedCommitTypes = core.getInput("allowed-commit-types").split(",");
+
+        if (isValidCommitMessage(commit.message, allowedCommitTypes)) {
             core.info(`✅ ${commit.message}`);
         } else {
             core.info(`🚩 ${commit.message}`);
