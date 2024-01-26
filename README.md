@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: webiny/action-conventional-commits@v1.1.0
+      - uses: webiny/action-conventional-commits@v1.2.0
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Optional, for private repositories.
           allowed-commit-types: "feat,fix" # Optional, set if you want a subset of commit types to be allowed.
