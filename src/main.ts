@@ -21,8 +21,9 @@ async function run() {
         let commit = extractedCommits[i];
 
         const allowedCommitTypes = core.getInput("allowed-commit-types").split(",");
+        const allowMergeCommits = core.getInput("allow-merge-commits") ?? true;
 
-        if (isValidCommitMessage(commit.message, allowedCommitTypes)) {
+        if (isValidCommitMessage(commit.message, allowedCommitTypes, allowMergeCommits)) {
             core.info(`✅ ${commit.message}`);
         } else {
             core.info(`🚩 ${commit.message}`);
