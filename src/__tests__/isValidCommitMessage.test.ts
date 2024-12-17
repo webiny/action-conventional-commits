@@ -1,16 +1,23 @@
 import isValidCommitMessage from "../isValidCommitMesage";
 
-test("should be able to correctly validate the commit message", () => {
-    expect(isValidCommitMessage("chore(nice-one): doing this right")).toBe(true);
-    expect(isValidCommitMessage("feat!: change all the things")).toBe(true);
-    expect(isValidCommitMessage("fix(user)!: a fix with some breaking changes")).toBe(true);
-    expect(isValidCommitMessage("fix: menu must open on shortcut press")).toBe(true);
-    expect(isValidCommitMessage("something: should not work")).toBe(false);
-    expect(isValidCommitMessage("fixes something")).toBe(false);
-    expect(isValidCommitMessage("🚧 fix: menu must open on shortcut press")).toBe(true);
-    expect(isValidCommitMessage("fix(menus): menu must open on shortcut press")).toBe(true);
-    expect(isValidCommitMessage("🚧 fix(menus): menu must open on shortcut press")).toBe(true);
-    expect(isValidCommitMessage("🚧 fixing something")).toBe(false);
-    expect(isValidCommitMessage("🚧 something: should not work")).toBe(false);
-    expect(isValidCommitMessage("chorz: 123")).toBe(false);
+describe("shoulde be able to correctly validate the commit message", () => {
+    test.each<[string, boolean]>([
+        ["chore(nice-one): doing this right", true],
+        ["feat!: change all the things", true],
+        ["fix(user)!: a fix with some breaking changes", true],
+        ["fix: menu must open on shortcut press", true],
+        ["something: should not work", false],
+        ["fixes something", false],
+        ["🚧 fix: menu must open on shortcut press", true],
+        ["fix(menus): menu must open on shortcut press", true],
+        ["🚧 fix(menus): menu must open on shortcut press", true],
+        ["🚧 fixing something", false],
+        ["🚧 something: should not work", false],
+        ["chorz: 123", false],
+    ])(
+        "%s",
+        (msg, expected) => {
+            expect(isValidCommitMessage(msg)).toBe(expected);
+        },
+    );
 });
