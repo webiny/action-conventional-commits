@@ -1,7 +1,7 @@
 {
   "name": "action-conventional-commits",
   "version": "1.0.0",
-  "repository": "git@github.com:doitadrian/action-conventional-commits.git",
+  "repository": "git@github.com:linco95/action-conventional-commits.git",
   "author": "Adrian Smijulj <adrian1358@gmail.com>",
   "license": "MIT",
   "dependencies": {
