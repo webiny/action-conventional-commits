@@ -1,5 +1,6 @@
-import got from "got";
 import { Context } from "@actions/github/lib/context";
+
+const got = require("got");
 
 export type Commit = {
     message: string;
@@ -11,7 +12,7 @@ export const extractCommits = async (
 ): Promise<Commit[]> => {
     // For "push" events, commits can be found in the "context.payload.commits".
     const pushCommits = context.payload.commits;
-    if (Array.isArray(pushCommits)) {
+    if (isArray(pushCommits)) {
         assertCommitArray(pushCommits);
         return pushCommits;
     }
@@ -43,12 +44,15 @@ async function getPrCommits(
             responseType: "json",
             headers: requestHeaders,
         });
-        if (!Array.isArray(body)) {
+        if (!isArray(body)) {
             return [];
         }
 
-        const commits = body.map((item) => {
-            return item?.commit;
+        const commits = body.map((item: any) => {
+            return isObject(item) &&
+                    "commit" in item
+                ? item.commit
+                : undefined;
         });
         assertCommitArray(commits);
         return commits;
@@ -61,10 +65,18 @@ function assertCommitArray(commits: unknown[]): asserts commits is Commit[] {
     commits.forEach(assertIsCommit);
     function assertIsCommit(item: unknown): asserts item is Commit {
         if (
-            typeof item !== "object" || item === null || !("message" in item) ||
+            !isObject(item) ||
             typeof item.message !== "string"
         ) {
             throw new Error("Commit message is not a string.");
         }
     }
+}
+
+function isArray(object: unknown): object is unknown[] {
+    return Array.isArray(object);
+}
+
+function isObject(object: unknown): object is Record<string, unknown> {
+    return typeof object === "object" && object !== null;
 }

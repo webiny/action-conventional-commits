@@ -8,8 +8,9 @@
     "./node_modules/*"
   ],
   "compilerOptions": {
-    "target": "es2016",
-    "moduleResolution": "node",
+    "target": "ESNext",
+    "moduleResolution": "nodenext",
+    "module": "NodeNext",
     "types": [],
     "strict": true,
     "strictNullChecks": true
