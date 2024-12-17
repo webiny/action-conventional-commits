@@ -1,36 +1,39 @@
-import get from "lodash.get";
 import got from "got";
+import { Context } from "@actions/github/lib/context";
 
-type Commit = {
+export type Commit = {
     message: string;
 };
 
-const extractCommits = async (context, core): Promise<Commit[]> => {
+export const extractCommits = async (
+    context: Context,
+    getInput: (input: string) => string,
+): Promise<Commit[]> => {
     // For "push" events, commits can be found in the "context.payload.commits".
-    const pushCommits = Array.isArray(get(context, "payload.commits"));
-    if (pushCommits) {
-        return context.payload.commits;
+    const pushCommits = context.payload.commits;
+    if (Array.isArray(pushCommits)) {
+        return pushCommits;
     }
 
     // For PRs, we need to get a list of commits via the GH API:
-    const prCommitsUrl = get(context, "payload.pull_request.commits_url");
+    const prCommitsUrl: string | undefined = context.payload.pull_request
+        ?.commits_url;
     if (prCommitsUrl) {
         try {
-            let requestHeaders = {
+            const githubToken = getInput("GITHUB_TOKEN");
+            const requestHeaders: Record<string, string> = {
                 "Accept": "application/vnd.github+json",
-            }
-            if (core.getInput('GITHUB_TOKEN') != "") {
-                requestHeaders["Authorization"] = "token " + core.getInput('GITHUB_TOKEN')
-            }
+                ...(githubToken === ""
+                    ? {}
+                    : { "Authorization": `token ${githubToken}` }),
+            };
+
             const { body } = await got.get(prCommitsUrl, {
                 responseType: "json",
                 headers: requestHeaders,
             });
 
-            if (Array.isArray(body)) {
-                return body.map((item) => item.commit);
-            }
-            return [];
+            return Array.isArray(body) ? body.map((item) => item.commit) : [];
         } catch {
             return [];
         }
@@ -38,5 +41,3 @@ const extractCommits = async (context, core): Promise<Commit[]> => {
 
     return [];
 };
-
-export default extractCommits;

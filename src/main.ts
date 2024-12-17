@@ -1,42 +1,46 @@
-const { context } = require("@actions/github");
-const core = require("@actions/core");
+import { context } from "@actions/github";
+import { endGroup, getInput, info, setFailed, startGroup } from "@actions/core";
 
 import isValidCommitMessage from "./isValidCommitMesage";
-import extractCommits from "./extractCommits";
+import { extractCommits } from "./extractCommits";
 
 async function run() {
-    core.info(
-        `ℹ️ Checking if commit messages are following the Conventional Commits specification...`
+    info(
+        `ℹ️ Checking if commit messages are following the Conventional Commits specification...`,
     );
 
-    const extractedCommits = await extractCommits(context, core);
+    const extractedCommits = await extractCommits(context, getInput);
     if (extractedCommits.length === 0) {
-        core.info(`No commits to check, skipping...`);
+        info(`No commits to check, skipping...`);
         return;
     }
 
     let hasErrors;
-    core.startGroup("Commit messages:");
+    startGroup("Commit messages:");
     for (let i = 0; i < extractedCommits.length; i++) {
         let commit = extractedCommits[i];
 
-        const allowedCommitTypes = core.getInput("allowed-commit-types").split(",");
+        const allowedCommitTypes = getInput("allowed-commit-types").split(
+            ",",
+        );
 
         if (isValidCommitMessage(commit.message, allowedCommitTypes)) {
-            core.info(`✅ ${commit.message}`);
+            info(`✅ ${commit.message}`);
         } else {
-            core.info(`🚩 ${commit.message}`);
+            info(`🚩 ${commit.message}`);
             hasErrors = true;
         }
     }
-    core.endGroup();
+    endGroup();
 
     if (hasErrors) {
-        core.setFailed(
-            `🚫 According to the conventional-commits specification, some of the commit messages are not valid.`
+        setFailed(
+            `🚫 According to the conventional-commits specification, some of the commit messages are not valid.`,
         );
     } else {
-        core.info("🎉 All commit messages are following the Conventional Commits specification.");
+        info(
+            "🎉 All commit messages are following the Conventional Commits specification.",
+        );
     }
 }
 
