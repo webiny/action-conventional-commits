@@ -18,7 +18,7 @@ async function run() {
     let hasErrors;
     startGroup("Commit messages:");
     for (let i = 0; i < extractedCommits.length; i++) {
-        let commit = extractedCommits[i];
+        const commit = extractedCommits[i];
 
         const allowedCommitTypes = getInput("allowed-commit-types").split(
             ",",

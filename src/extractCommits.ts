@@ -47,7 +47,7 @@ async function getPrCommits(
             return [];
         }
 
-        const commits = body.map((item: any) => {
+        const commits = body.map((item: unknown) => {
             return isObject(item) &&
                     "commit" in item
                 ? item.commit
