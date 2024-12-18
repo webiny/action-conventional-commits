@@ -1,7 +1,5 @@
 import { Context } from "@actions/github/lib/context";
 
-const got = require("got");
-
 export type Commit = {
     message: string;
 };
@@ -40,10 +38,11 @@ async function getPrCommits(
     };
 
     try {
-        const { body } = await got.get(prCommitsUrl, {
-            responseType: "json",
+        const response = await fetch(prCommitsUrl, {
             headers: requestHeaders,
         });
+        const body = await response.json();
+
         if (!isArray(body)) {
             return [];
         }
