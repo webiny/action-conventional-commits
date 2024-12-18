@@ -22,5 +22,4 @@ build/
 *.tsbuildinfo
 .cloudfnsrc.js
 .cloudfns/
-yarn.lock
 dist/
