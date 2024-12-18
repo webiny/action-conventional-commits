@@ -37,9 +37,6 @@ const isValidCommitMessage = (
     }
 
     possiblyValidCommitType = possiblyValidCommitType
-        .replace(/\s/g, "") // Remove all whitespace
-        .replace(/!/g, "") // Remove bang for notify breaking change
-        .replace(/()/g, "") // Remove all whitespace
         .replace(/[^a-z]/g, ""); // Only leave [a-z] characters.
 
     return availableTypes.includes(possiblyValidCommitType);
