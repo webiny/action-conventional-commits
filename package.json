@@ -25,8 +25,12 @@
     "typescript-eslint": "^8.18.1"
   },
   "scripts": {
+    "clear": "rm -rf dist",
     "build": "ncc build src/main.ts --out dist/main",
     "watch": "ncc build src/main.ts --out dist/main --watch",
-    "test": "jest"
+    "test": "jest",
+    "format": "prettier --check ./src",
+    "lint": "eslint ./src",
+    "all": "yarn clear && yarn build && yarn format && yarn lint && yarn test"
   }
 }
