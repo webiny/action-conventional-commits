@@ -1,5 +1,5 @@
 import { context } from '@actions/github'
-import { endGroup, error, getInput, info, setFailed, startGroup } from '@actions/core'
+import { endGroup, getInput, info, setFailed, startGroup } from '@actions/core'
 
 import isValidCommitMessage from './isValidCommitMesage'
 import { extractCommits } from './extractCommits'
@@ -15,7 +15,7 @@ async function run() {
 
   startGroup('Commit messages:')
   const allowedCommitTypes = getInput('allowed-commit-types').split(',')
-  const commitMessageStatuses = extractedCommits.map((commit) => {
+  const commitMessageStatuses = extractedCommits.map<[string, boolean]>((commit) => {
     return [commit.message, isValidCommitMessage(commit.message, allowedCommitTypes)]
   })
 
@@ -23,7 +23,7 @@ async function run() {
     if (isValid) {
       info(`✅ ${message}`)
     } else {
-      error(`🚩 ${message}`)
+      info(`🚩 ${message}`)
     }
   })
   endGroup()
