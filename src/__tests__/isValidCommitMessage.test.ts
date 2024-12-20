@@ -15,6 +15,8 @@ describe("isValidCommitMessage tests", () => {
             ["🚧 fixing something", false],
             ["🚧 something: should not work", false],
             ["chorz: 123", false],
+            ["Merge branch 'master' into feature/branch", true],
+            ["Revert 'fix: menu must open on shortcut press'", true],
         ])(
             "%s",
             (msg, expected) => {
