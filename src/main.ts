@@ -1,5 +1,12 @@
 import { context } from "@actions/github";
-import { endGroup, getInput, info, setFailed, startGroup } from "@actions/core";
+import {
+    endGroup,
+    error,
+    getInput,
+    info,
+    setFailed,
+    startGroup,
+} from "@actions/core";
 
 import isValidCommitMessage from "./isValidCommitMesage";
 import { extractCommits } from "./extractCommits";
@@ -15,24 +22,25 @@ async function run() {
         return;
     }
 
-    let hasErrors;
     startGroup("Commit messages:");
-    for (let i = 0; i < extractedCommits.length; i++) {
-        const commit = extractedCommits[i];
+    const allowedCommitTypes = getInput("allowed-commit-types").split(",");
+    const commitMessageStatuses = extractedCommits.map((commit) => {
+        return [
+            commit.message,
+            isValidCommitMessage(commit.message, allowedCommitTypes),
+        ];
+    });
 
-        const allowedCommitTypes = getInput("allowed-commit-types").split(
-            ",",
-        );
-
-        if (isValidCommitMessage(commit.message, allowedCommitTypes)) {
-            info(`✅ ${commit.message}`);
+    commitMessageStatuses.forEach(([message, isValid]) => {
+        if (isValid) {
+            info(`✅ ${message}`);
         } else {
-            info(`🚩 ${commit.message}`);
-            hasErrors = true;
+            error(`🚩 ${message}`);
         }
-    }
+    });
     endGroup();
 
+    const hasErrors = commitMessageStatuses.some(([, isValid]) => !isValid);
     if (hasErrors) {
         setFailed(
             `🚫 According to the conventional-commits specification, some of the commit messages are not valid.`,
