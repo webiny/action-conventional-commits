@@ -2,7 +2,12 @@ import { Context } from "@actions/github/lib/context";
 import { extractCommits } from "../extractCommits";
 
 describe("extractCommits tests", () => {
-    describe("PR commits", () => {
+    const getInput = (
+        inputs: Record<string, string> = {},
+    ): (input: string) => string =>
+    (input) => inputs[input] ?? "";
+
+    describe("Push commits", () => {
         test("should be able to extract commits from push", async () => {
             const context: Partial<Context> = {
                 payload: {
@@ -12,45 +17,87 @@ describe("extractCommits tests", () => {
                     ],
                 },
             };
-            const test = await extractCommits(
+            const actualCommits = await extractCommits(
                 context as Context,
-                (input) => input,
+                getInput(),
             );
-            expect(test.length).toBe(2);
+            expect(actualCommits.length).toBe(2);
         });
     });
 
-    describe("push commits", () => {
-        test("should be able to extract commits from PR", async () => {
-            const commitsUrl =
-                "https://api.github.com/repos/octocat/Hello-World/pulls/1347/commits";
-            jest.spyOn(global, "fetch").mockImplementation(
-                jest.fn(
-                    () =>
-                        Promise.resolve({
-                            json: () =>
-                                Promise.resolve([
-                                    { commit: { message: "message0" } },
-                                    { commit: { message: "message1" } },
-                                    { commit: { message: "message2" } },
-                                ]),
-                        }),
-                ) as jest.Mock,
+    describe("PR commits", () => {
+        const responseFn: jest.Mock = jest.fn();
+        jest.spyOn(global, "fetch").mockImplementation(responseFn);
+
+        beforeEach(() => {
+            responseFn.mockResolvedValue({ json: () => [], ok: true });
+        });
+
+        const mockJsonResponse = (json: unknown) => {
+            responseFn.mockResolvedValue(
+                { json: () => json, ok: true },
             );
-            const fakePrNumber = 1347;
-            const context: Partial<Context> = {
-                payload: {
-                    pull_request: {
-                        number: fakePrNumber,
-                        commits_url: commitsUrl,
-                    },
+        };
+
+        const fakePrNumber = 1347;
+
+        const commitsUrl =
+            `https://api.example.com/repos/example/Hello-World/pulls/${fakePrNumber}/commits`;
+        const context: Partial<Context> = {
+            payload: {
+                pull_request: {
+                    number: fakePrNumber,
+                    commits_url: commitsUrl,
                 },
-            };
-            const test = await extractCommits(
+            },
+        };
+
+        test("should be able to extract commits from PR", async () => {
+            mockJsonResponse([
+                { commit: { message: "message0" } },
+                { commit: { message: "message1" } },
+                { commit: { message: "message2" } },
+            ]);
+
+            const actualCommits = await extractCommits(
                 context as Context,
-                (input) => input,
+                getInput(),
             );
-            expect(test.length).toBe(3);
+            expect(actualCommits.length).toBe(3);
+            expect(responseFn).toHaveBeenCalledWith(commitsUrl, {
+                headers: {
+                    Accept: "application/vnd.github+json",
+                },
+            });
+        });
+
+        test("should return empty array if no commits found", async () => {
+            const actualCommits = await extractCommits(
+                context as Context,
+                getInput(),
+            );
+            expect(actualCommits.length).toBe(0);
+            expect(responseFn).toHaveBeenCalledWith(commitsUrl, {
+                headers: {
+                    Accept: "application/vnd.github+json",
+                },
+            });
+        });
+
+        test("should add auth header if token is provided", async () => {
+            mockJsonResponse([]);
+
+            const githubToken = "ghp_1234567890abcdefghijklmnopqrstuvwxyz";
+            await extractCommits(
+                context as Context,
+                getInput({ "github-token": githubToken }),
+            );
+            expect(responseFn).toHaveBeenCalledWith(commitsUrl, {
+                headers: {
+                    Accept: "application/vnd.github+json",
+                    Authorization: `token ${githubToken}`,
+                },
+            });
         });
     });
 });

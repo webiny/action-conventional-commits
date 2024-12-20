@@ -55,7 +55,9 @@ async function getPrCommits(
         });
         assertCommitArray(commits);
         return commits;
-    } catch {
+    } catch (error) {
+        console.error("Error fetching PR commits:", error);
+
         return [];
     }
 }
