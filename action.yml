@@ -8,6 +8,10 @@ inputs:
     description: 'Specify a comma separated list of allowed commit types'
     default: 'feat,fix,docs,style,refactor,test,build,perf,ci,chore,revert,merge,wip'
     required: false
+  include-pull-request-title:
+    description: 'Ensure the pull request title follows the conventional-commits standard'
+    default: 'false'
+    required: false
 
 runs:
   using: node20
