@@ -23,11 +23,7 @@ const isValidCommitMessage = (message: string, availableTypes: string[] = DEFAUL
 
   // Commit message doesn't fall into the exceptions group. Let's do the validation.
   const commitTypePrefix = message.split(':')[0].toLowerCase()
-
-  const commitTypePrefixWithoutScope = removeScope(commitTypePrefix)
-
-  const commitTypePrefixWithoutAlphaOrScope = removeNonAlphaChars(commitTypePrefixWithoutScope)
-
+  const commitTypePrefixWithoutAlphaOrScope = removeNonAlphaChars(removeScope(commitTypePrefix))
   return availableTypes.includes(commitTypePrefixWithoutAlphaOrScope)
 }
 

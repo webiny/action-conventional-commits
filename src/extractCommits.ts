@@ -40,9 +40,7 @@ async function getPrCommits({ prCommitsUrl, githubToken }: GetPrCommitsProps): P
       return []
     }
 
-    const commits = body.map((item: unknown) => {
-      return isObject(item) && 'commit' in item ? item.commit : undefined
-    })
+    const commits = body.map((item: unknown) => (isObject(item) && 'commit' in item ? item.commit : undefined))
     assertCommitArray(commits)
     return commits
   } catch (error) {

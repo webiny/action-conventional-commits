@@ -15,9 +15,10 @@ async function run() {
 
   startGroup('Commit messages:')
   const allowedCommitTypes = getInput('allowed-commit-types').split(',')
-  const commitMessageStatuses = extractedCommits.map<[string, boolean]>((commit) => {
-    return [commit.message, isValidCommitMessage(commit.message, allowedCommitTypes)]
-  })
+  const commitMessageStatuses = extractedCommits.map<[string, boolean]>((commit) => [
+    commit.message,
+    isValidCommitMessage(commit.message, allowedCommitTypes),
+  ])
 
   commitMessageStatuses.forEach(([message, isValid]) => {
     if (isValid) {
