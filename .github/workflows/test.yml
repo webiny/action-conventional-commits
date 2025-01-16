@@ -1,4 +1,4 @@
-name: 'build-test'
+name: 'Pre merge'
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
@@ -7,6 +7,7 @@ on: # rebuild any PRs and main branch changes
 
 jobs:
   build: # make sure build/ci work properly
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,15 +19,37 @@ jobs:
         uses: borales/actions-yarn@v5
         with:
           cmd: install --immutable
-      - name: Run all
+      - name: Formatting
         uses: borales/actions-yarn@v5
         with:
-          cmd: all
+          cmd: format
+      - name: Run linting
+        uses: borales/actions-yarn@v5
+        with:
+          cmd: lint
+      - name: Check types
+        uses: borales/actions-yarn@v5
+        with:
+          cmd: type-check
+      - name: Run clear
+        uses: borales/actions-yarn@v5
+        with:
+          cmd: clear
+      - name: Run build
+        uses: borales/actions-yarn@v5
+        with:
+          cmd: build
+      - name: Compare the expected and actual dist/ directories
+        run: |
+          if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
+            echo "::error::Detected uncommitted changes in dist/ after build.  See status below:"
+            git diff
+            exit 1
+          fi
+
   test: # make sure the action works on a clean machine without building
+    name: Run this action on itself
     runs-on: ubuntu-latest
-    env:
-      USERNAME:
-      SPECIAL:
     steps:
       - uses: actions/checkout@v4
       - name: Set Node.js 22.x

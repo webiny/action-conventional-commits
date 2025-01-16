@@ -1,5 +1,6 @@
 import { Context } from '@actions/github/lib/context'
 import { extractCommits } from '../extractCommits'
+import { describe, test, expect, jest, beforeEach } from '@jest/globals'
 
 describe('extractCommits tests', () => {
   const getInput =
@@ -20,15 +21,16 @@ describe('extractCommits tests', () => {
   })
 
   describe('PR commits', () => {
-    const responseFn: jest.Mock = jest.fn()
+    type ResponseFn = (input: string | URL | Request, init?: RequestInit | undefined) => Promise<Response>
+    const responseFn = jest.fn<ResponseFn>()
     jest.spyOn(global, 'fetch').mockImplementation(responseFn)
 
     beforeEach(() => {
-      responseFn.mockResolvedValue({ json: () => [], ok: true })
+      responseFn.mockResolvedValue({ json: async () => [], ok: true } as Response)
     })
 
     const mockJsonResponse = (json: unknown) => {
-      responseFn.mockResolvedValue({ json: () => json, ok: true })
+      responseFn.mockResolvedValue({ json: async () => json, ok: true } as Response)
     }
 
     const fakePrNumber = 1347

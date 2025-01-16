@@ -31,6 +31,8 @@
     "test": "jest",
     "format": "prettier --check ./src",
     "lint": "eslint ./src",
-    "all": "yarn clear && yarn build && yarn format && yarn lint && yarn test"
+    "type-check": "tsc --noEmit",
+    "all": "yarn clear && yarn build && yarn format && yarn lint && yarn test && yarn type-check",
+    "preversion": "yarn all"
   }
 }

@@ -22,4 +22,3 @@ build/
 *.tsbuildinfo
 .cloudfnsrc.js
 .cloudfns/
-dist/
