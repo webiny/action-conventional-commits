@@ -1,4 +1,4 @@
-name: "Conventional Commits"
+name: "Conventional Commits Action"
 description: "Ensures that all commit messages are following the conventional-commits standard."
 inputs:
   GITHUB_TOKEN:
