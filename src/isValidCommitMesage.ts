@@ -14,7 +14,12 @@ const DEFAULT_COMMIT_TYPES = [
     "wip",
 ];
 
-const EXCEPTIONS = ["Merge ", "Revert ", "Reapply ", "Initial plan"];
+const EXCEPTIONS = [
+    "Merge ",
+    "Revert ",
+    "Reapply ",
+    "Initial plan"
+];
 
 const isValidCommitMessage = (message: string, availableTypes = DEFAULT_COMMIT_TYPES): boolean => {
     // Exceptions.
