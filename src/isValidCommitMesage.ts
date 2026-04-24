@@ -12,6 +12,7 @@ const DEFAULT_COMMIT_TYPES = [
     "revert",
     "merge",
     "wip",
+    "improvement"
 ];
 
 const EXCEPTIONS = [
